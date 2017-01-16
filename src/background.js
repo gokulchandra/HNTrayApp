@@ -41,21 +41,23 @@ app.on('ready', function () {
     trayIcon = new Tray(path.join(__dirname, '/../img/app-icon.png'));
     trayIcon.setContextMenu(trayMenu);
 
-    var mainWindow = createWindow('main', {
-        width: 1000,
-        height: 600
-    });
+//     var mainWindow = createWindow('main', {
+//         width: 1000,
+//         height: 600
+//     });
 
-    mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'app.html'),
-        protocol: 'file:',
-        slashes: true
-    }));
+//     mainWindow.loadURL(url.format({
+//         pathname: path.join(__dirname, 'app.html'),
+//         protocol: 'file:',
+//         slashes: true
+//     }));
 
-    if (env.name === 'development') {
-        mainWindow.openDevTools();
-    }
+//     if (env.name === 'development') {
+//         mainWindow.openDevTools();
+//     }
+    app.dock.hide();
 });
+
 
 app.on('window-all-closed', function () {
     app.quit();
