@@ -9,7 +9,7 @@ import { app, Menu, Tray, ipcRenderer } from 'electron';
 import { devMenuTemplate } from './menu/dev_menu_template';
 import { editMenuTemplate } from './menu/edit_menu_template';
 import createWindow from './helpers/window';
-import trayMenu from './tray'
+import buildMenu from './tray'
 
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
@@ -35,26 +35,9 @@ if (env.name !== 'production') {
 }
 
 app.on('ready', function () {
-
-    setApplicationMenu();
-
     trayIcon = new Tray(path.join(__dirname, '/../img/app-icon.png'));
-    trayIcon.setContextMenu(trayMenu);
-
-//     var mainWindow = createWindow('main', {
-//         width: 1000,
-//         height: 600
-//     });
-
-//     mainWindow.loadURL(url.format({
-//         pathname: path.join(__dirname, 'app.html'),
-//         protocol: 'file:',
-//         slashes: true
-//     }));
-
-//     if (env.name === 'development') {
-//         mainWindow.openDevTools();
-//     }
+    trayIcon.setToolTip('This is my application.');
+    buildMenu(trayIcon);
     app.dock.hide();
 });
 

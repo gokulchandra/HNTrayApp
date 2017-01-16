@@ -1,63 +1,41 @@
 import _ from 'lodash';
-import axios from 'axios';
-import { app, Menu, Tray } from 'electron';
+import { app, Menu, Tray, MenuItem } from 'electron';
 
-axios.defaults.adapter = require('axios/lib/adapters/http');
+import {getTrendingItems, trendingItems} from './helpers/loadData'
 
-let client = axios.create({
-  baseURL: 'https://hacker-news.firebaseio.com/v0',
-  timeout: 10000,
-  headers: {'X-Custom-Header': 'foobar'}
-});
+let trayIcon = null;
+let itemsTrending = [];
 
-let getTrendingItems  = () => {
-	client.get('/topstories.json?print=pretty')
-		.then(res => {
-			trendingItems = res.data.slice(0,9).map((item, index) => {
-				return {
-					label: item,
-					enabled: false
-				}
-			})
-		})
+const buildMenu =  (_trayIcon) => {
+	getTrendingItems()
+	trayIcon = _trayIcon
+	setTimeout(_buildMenu, 1000 * 5)
+	setInterval(_buildMenu, 1000 * 60 * 15)	
 }
 
-let getNewItems = () => {
-	return client.get('/newstories.json?print=pretty')
-			.then(res => {
-				return res.data.slice(0,9).map((item, index) => {
-					return {
-						label: item,
-						enabled: false
-					}
-				})
-			})
+const _buildMenu = () => {
+  let menu = new Menu();
+ 	menu.append(new MenuItem({
+    label: 'Refresh',
+    click: () => {_buildMenu()}
+  }));
+
+ 	menu.append(new MenuItem({
+    type: 'separator'
+  }));
+  menu.append(new MenuItem({
+    label: 'Trending',
+    submenu: trendingItems
+  }))
+  trayIcon.setContextMenu(menu);
+}
+
+const buildTrendingMenu = () => {
+  return new MenuItem({
+    label: 'Trending',
+    submenu: itemsTrending
+  })
 }
 
 
-let trayMenuTemplate = [
-	{
-		label: 'Reload',
-		role: 'reload'
-	},
-	{
-		label: 'Trending',
-		enabled: true,
-		submenu: []
-	},
-	{
-		label: 'New',
-		enabled: true,
-		submenu: getNewItems()
-	},
-	{
-		label: 'Quit',
-		click: () =>{
-		  app.quit();
-		}
-	}
-];
-
-const trayMenu = Menu.buildFromTemplate(trayMenuTemplate);
-
-export default trayMenu;
+export default buildMenu;
