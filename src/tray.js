@@ -17,15 +17,22 @@ const _buildMenu = () => {
   let menu = new Menu();
  	menu.append(new MenuItem({
     label: 'Refresh',
-    click: () => {_buildMenu()}
+    click: () => _buildMenu()
   }));
+
 
  	menu.append(new MenuItem({
     type: 'separator'
   }));
+  
   menu.append(new MenuItem({
     label: 'Trending',
     submenu: trendingItems
+  }))
+
+  menu.append(new MenuItem({
+  	label: 'Quit',
+  	click: () => app.quit()
   }))
   trayIcon.setContextMenu(menu);
 }

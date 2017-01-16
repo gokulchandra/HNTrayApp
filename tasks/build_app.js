@@ -5,6 +5,7 @@ var less = require('gulp-less');
 var watch = require('gulp-watch');
 var batch = require('gulp-batch');
 var plumber = require('gulp-plumber');
+var image = require('gulp-image');
 var jetpack = require('fs-jetpack');
 var bundle = require('./bundle');
 var utils = require('./utils');
@@ -25,6 +26,12 @@ gulp.task('less', function () {
         .pipe(plumber())
         .pipe(less())
         .pipe(gulp.dest(destDir.path('stylesheets')));
+});
+
+gulp.task('image', function () {
+  gulp.src(srcDir.path('assets/*'))
+    .pipe(image())
+    .pipe(gulp.dest(destDir.path('assets')));
 });
 
 gulp.task('environment', function () {
@@ -50,4 +57,4 @@ gulp.task('watch', function () {
     }));
 });
 
-gulp.task('build', ['bundle', 'less', 'environment']);
+gulp.task('build', ['bundle', 'less', 'image', 'environment']);

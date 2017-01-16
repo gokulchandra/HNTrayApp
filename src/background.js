@@ -35,7 +35,7 @@ if (env.name !== 'production') {
 }
 
 app.on('ready', function () {
-    trayIcon = new Tray(path.join(__dirname, '/../img/app-icon.png'));
+    trayIcon = new Tray(path.join(__dirname, 'assets/app-icon.png'));
     trayIcon.setToolTip('This is my application.');
     buildMenu(trayIcon);
     app.dock.hide();
