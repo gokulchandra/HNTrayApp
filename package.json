@@ -1,7 +1,7 @@
 {
-  "name": "electron-hn-menu",
+  "name": "electron-hn-menubar",
   "productName": "Hackernews Menu",
-  "description": "A menu that lists articles from HN",
+  "description": "A menubar client that lists articles from HN",
   "version": "0.1.0",
   "author": "",
   "copyright": "",
