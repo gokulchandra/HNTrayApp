@@ -5,16 +5,18 @@
 
 import path from 'path';
 import url from 'url';
-import { app, Menu } from 'electron';
+import { app, Menu, Tray, ipcRenderer } from 'electron';
 import { devMenuTemplate } from './menu/dev_menu_template';
 import { editMenuTemplate } from './menu/edit_menu_template';
 import createWindow from './helpers/window';
+import trayMenu from './tray'
 
 // Special module holding environment variables which you declared
 // in config/env_xxx.json file.
 import env from './env';
 
 var mainWindow;
+let trayIcon = null;
 
 var setApplicationMenu = function () {
     var menus = [editMenuTemplate];
@@ -33,7 +35,11 @@ if (env.name !== 'production') {
 }
 
 app.on('ready', function () {
+
     setApplicationMenu();
+
+    trayIcon = new Tray(path.join(__dirname, '/../img/app-icon.png'));
+    trayIcon.setContextMenu(trayMenu);
 
     var mainWindow = createWindow('main', {
         width: 1000,
