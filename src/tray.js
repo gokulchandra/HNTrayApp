@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import when from 'when';
 import { app, Menu, Tray, MenuItem } from 'electron';
+import {shell} from 'electron';
 
 import {getItemDetails, getNewItems, getTrendingItems} from './helpers/loadData'
 
@@ -10,7 +11,7 @@ let trayIcon = null;
 const buildMenu =  (_trayIcon) => {
 	trayIcon = _trayIcon
 	setTimeout(_buildMenu, 1000 * 5)
-	setInterval(_buildMenu, 1000 * 60 * 1)
+	setInterval(_buildMenu, 1000 * 60 * 5)
 }
 
 const createItems = (res, menu, position, name) => {
@@ -26,7 +27,7 @@ const createItems = (res, menu, position, name) => {
         click: () => { shell.openExternal(obj.data.url) }
       }
     });
-    menu.append(new MenuItem({label:name, submenu:items}))
+    menu.insert(position, new MenuItem({label:name, submenu:items}))
     trayIcon.setContextMenu(menu);
   });
 }
@@ -35,26 +36,27 @@ const refreshMenu = (menu) => {
   getTrendingItems()
     .then(res =>{ createItems(res, menu, 2, 'Trending') })
   getNewItems()
-    .then(res => createItems(res, menu, 3, 'New'))
-  // _buildMenu()
+    .then(res => createItems(res, menu, 2, 'New'))
 }
 
 const _buildMenu = () => {
   let menu = new Menu();
   refreshMenu(menu);
-  menu.append(new MenuItem({
-    label: 'Quit',
-    click: () => app.quit()
-  }))
-
- 	menu.append(new MenuItem({
-    type: 'separator'
-  }));
 
   menu.append(new MenuItem({
     label: 'Refresh',
     click: () => _buildMenu()
   }));
+
+  menu.append(new MenuItem({
+    type: 'separator'
+  }));
+
+  menu.append(new MenuItem({
+    label: 'Quit',
+    click: () => app.quit()
+  }))
+
 
   trayIcon.setContextMenu(menu);
 }
