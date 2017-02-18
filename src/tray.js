@@ -1,23 +1,27 @@
 import _ from 'lodash';
 import { app, Menu, Tray, MenuItem } from 'electron';
 
-import {getTrendingItems, trendingItems} from './helpers/loadData'
+import {trendingItems, newItems, getNewItems, getTrendingItems} from './helpers/loadData'
 
 let trayIcon = null;
-let itemsTrending = [];
 
 const buildMenu =  (_trayIcon) => {
-	getTrendingItems()
 	trayIcon = _trayIcon
-	setTimeout(_buildMenu, 1000 * 5)
-	setInterval(_buildMenu, 1000 * 60 * 15)	
+	setTimeout(refreshMenu, 1000 * 5)
+	setInterval(refreshMenu, 1000 * 60 * 1)
+}
+
+const refreshMenu = () => {
+  getTrendingItems()
+  getNewItems()
+  _buildMenu()
 }
 
 const _buildMenu = () => {
   let menu = new Menu();
  	menu.append(new MenuItem({
     label: 'Refresh',
-    click: () => _buildMenu()
+    click: () => refreshMenu()
   }));
 
 
@@ -29,6 +33,11 @@ const _buildMenu = () => {
     label: 'Trending',
     submenu: trendingItems
   }))
+  
+  menu.append(new MenuItem({
+    label: 'New',
+    submenu: newItems
+  }))
 
   menu.append(new MenuItem({
   	label: 'Quit',
@@ -36,13 +45,5 @@ const _buildMenu = () => {
   }))
   trayIcon.setContextMenu(menu);
 }
-
-const buildTrendingMenu = () => {
-  return new MenuItem({
-    label: 'Trending',
-    submenu: itemsTrending
-  })
-}
-
 
 export default buildMenu;

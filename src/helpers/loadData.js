@@ -12,7 +12,7 @@ let client = axios.create({
 export var trendingItems = [];
 export var newItems = [];
 
-export const getTrendingItems  = () => {
+export const getTrendingItems  = (callback) => {
 	client.get('/topstories.json?print=pretty')
 		.then(res => {
 			let promises = 
@@ -20,17 +20,15 @@ export const getTrendingItems  = () => {
 					return getItemDetails(item)
 				})
 
-				let promise = when.all(promises);
-				promise.then(resolved => {
-					let items = 
-						trendingItems = resolved.map((obj) => {
-							return {
-								label: obj.data.title + ' [' + obj.data.score+'] ',
-								click: () => { shell.openExternal(obj.data.url) }
-							} 
-						});
-
+			let promise = when.all(promises);
+			promise.then(resolved => {
+				trendingItems = resolved.map((obj) => {
+					return {
+						label: obj.data.title + ' [' + obj.data.score+'] ',
+						click: () => { shell.openExternal(obj.data.url) }
+					}
 				});
+			});
 		});
 }
 
@@ -38,15 +36,23 @@ const getItemDetails = (id) => {
 	return client.get(`/item/${id}.json?print=pretty`)
 }
 
-export const getNewItems = () => {
-	return client.get('/newstories.json?print=pretty')
-			.then(res => {
-				return res.data.slice(0,9).map((item, index) => {
-					return {
-						label: item,
-						enabled: false
-					}
-				})
-			})
+export const getNewItems  = () => {
+	client.get('/newstories.json?print=pretty')
+	.then(res => {
+		let promises =
+			res.data.slice(0,9).map((item, index) => {
+				return getItemDetails(item)
+			});
+
+		let promise = when.all(promises);
+		promise.then(resolved => {
+			newItems = resolved.map((obj) => {
+				return {
+					label: obj.data.title + ' [' + obj.data.score+'] ',
+					click: () => { shell.openExternal(obj.data.url) }
+				};
+			});
+		});
+	});
 }
 
